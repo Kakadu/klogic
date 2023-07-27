@@ -80,6 +80,7 @@ sealed class RecursiveStream<out T> {
         }
         bindListeners.forEach { it.onBind(this, f) }
 
+        println("FUCK")
 //        return this bindImpl f
         return when (this) {
             is NilStream -> {
