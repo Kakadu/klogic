@@ -38,7 +38,33 @@ sealed class RecursiveStream<out T> {
         }
         mplusListeners.forEach { it.onMplus(this, other) }
 
-        return this mplusImpl other
+//        return this mplusImpl other
+        return when (this) {
+            is NilStream -> {
+                if (System.getenv("SILENT_MPLUS_BIND") == null)
+                    println("mplus 1")
+                other.force()
+            }
+            is ThunkStream -> {
+                if (System.getenv("SILENT_MPLUS_BIND") == null)
+                    println("mplus 2")
+                return ThunkStream { other() mplus this }
+            }
+            is ConsStream -> {
+                when (this.tail) {
+                    is NilStream -> {
+                        if (System.getenv("SILENT_MPLUS_BIND") == null)
+                            println("mplus 3")
+                        ConsStream(this.head, other)
+                    }
+                    else -> {
+                        if (System.getenv("SILENT_MPLUS_BIND") == null)
+                            println("mplus 4")
+                        ConsStream(this.head, ThunkStream { other() mplus this.tail })
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -54,7 +80,34 @@ sealed class RecursiveStream<out T> {
         }
         bindListeners.forEach { it.onBind(this, f) }
 
-        return this bindImpl f
+//        return this bindImpl f
+        return when (this) {
+            is NilStream -> {
+                if (System.getenv("SILENT_MPLUS_BIND") == null)
+                    println("bind 1")
+                this
+            }
+            is ThunkStream -> {
+                if (System.getenv("SILENT_MPLUS_BIND") == null)
+                    println("bind 2")
+                ThunkStream { elements() bind f }
+            }
+            is ConsStream -> {
+                when (this.tail) {
+                    is NilStream -> {
+                        if (System.getenv("SILENT_MPLUS_BIND") == null)
+                            println("bind 3")
+                        f(head)
+                    }
+                    else -> {
+                        if (System.getenv("SILENT_MPLUS_BIND") == null)
+                            println("bind 4")
+                        val mappedHead = f(head)
+                        mappedHead mplus ThunkStream { tail() bind f }
+                    }
+                }
+            }
+        }
     }
 
     protected abstract infix fun mplusImpl(other: RecursiveStream<@UnsafeVariance T>): RecursiveStream<T>
