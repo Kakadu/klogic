@@ -160,15 +160,17 @@ sealed class RecursiveStream<out T> {
 context(RelationalContext)
 internal class NilStream internal constructor(): RecursiveStream<Nothing>() {
     override infix fun mplusImpl(other: RecursiveStream<Nothing>): RecursiveStream<Nothing> {
-        if (System.getenv("SILENT_MPLUS_BIND") == null)
-            println("mplus 1")
-        return other.force()
+        TODO("IT should fail")
+//        if (System.getenv("SILENT_MPLUS_BIND") == null)
+//            println("mplus 1")
+//        return other.force()
     }
 
     override infix fun <R> bindImpl(f: (Nothing) -> RecursiveStream<R>): RecursiveStream<R> {
-        if (System.getenv("SILENT_MPLUS_BIND") == null)
-            println("bind 1")
-        return this
+        TODO("IT should fail")
+//        if (System.getenv("SILENT_MPLUS_BIND") == null)
+//            println("bind 1")
+//        return this
     }
 
     override fun force(): RecursiveStream<Nothing> = this
@@ -188,28 +190,30 @@ internal class NilStream internal constructor(): RecursiveStream<Nothing>() {
 context(RelationalContext)
 class ConsStream<T>(val head: T, val tail: RecursiveStream<T>) : RecursiveStream<T>() {
     override infix fun mplusImpl(other: RecursiveStream<@UnsafeVariance T>): RecursiveStream<T> {
+        TODO("IT should fail")
         // The special case for streams containing only one element from the Scheme implementation
-        if (tail is NilStream) {
-            if (System.getenv("SILENT_MPLUS_BIND") == null)
-                println("mplus 3")
-            return ConsStream(head, other)
-        }
-        if (System.getenv("SILENT_MPLUS_BIND") == null)
-            println("mplus 4")
-        return ConsStream(head, ThunkStream { other() mplus tail })
+//        if (tail is NilStream) {
+//            if (System.getenv("SILENT_MPLUS_BIND") == null)
+//                println("mplus 3")
+//            return ConsStream(head, other)
+//        }
+//        if (System.getenv("SILENT_MPLUS_BIND") == null)
+//            println("mplus 4")
+//        return ConsStream(head, ThunkStream { other() mplus tail })
     }
 
     override infix fun <R> bindImpl(f: (T) -> RecursiveStream<R>): RecursiveStream<R> {
+        TODO("IT should fail")
         // The special case for streams containing only one element from the Scheme implementation
-        if (tail is NilStream) {
-            if (System.getenv("SILENT_MPLUS_BIND") == null)
-                println("bind 3")
-            return f(head)
-        }
-        if (System.getenv("SILENT_MPLUS_BIND") == null)
-            println("bind 4")
-        val mappedHead = f(head)
-        return mappedHead mplus ThunkStream { tail() bind f }
+//        if (tail is NilStream) {
+//            if (System.getenv("SILENT_MPLUS_BIND") == null)
+//                println("bind 3")
+//            return f(head)
+//        }
+//        if (System.getenv("SILENT_MPLUS_BIND") == null)
+//            println("bind 4")
+//        val mappedHead = f(head)
+//        return mappedHead mplus ThunkStream { tail() bind f }
     }
 
     override fun force(): RecursiveStream<T> = this
@@ -239,16 +243,18 @@ class ConsStream<T>(val head: T, val tail: RecursiveStream<T>) : RecursiveStream
 context(RelationalContext)
 class ThunkStream<T>(val elements: () -> RecursiveStream<T>) : RecursiveStream<T>() {
     override infix fun mplusImpl(other: RecursiveStream<@UnsafeVariance T>): RecursiveStream<T> {
-        if (System.getenv("SILENT_MPLUS_BIND") == null)
-            println("mplus 2")
-        return ThunkStream { other() mplus this }
+        TODO("IT should fail")
+//        if (System.getenv("SILENT_MPLUS_BIND") == null)
+//            println("mplus 2")
+//        return ThunkStream { other() mplus this }
     }
 
 
     override infix fun <R> bindImpl(f: (T) -> RecursiveStream<R>): RecursiveStream<R> {
-        if (System.getenv("SILENT_MPLUS_BIND") == null)
-            println("bind 2")
-        return ThunkStream { elements() bind f }
+        TODO("IT should fail")
+//        if (System.getenv("SILENT_MPLUS_BIND") == null)
+//            println("bind 2")
+//        return ThunkStream { elements() bind f }
     }
 
     override fun force(): RecursiveStream<T> = elements()
