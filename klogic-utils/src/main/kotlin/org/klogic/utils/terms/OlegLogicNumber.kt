@@ -194,8 +194,10 @@ fun mulᴼ(n: OlegTerm, m: OlegTerm, p: OlegTerm): Goal = conde(
         val numberZ = z.toOlegLogicNumber()
 
         and(
-            (n `===` (digitZero + x).toOlegLogicNumber()) and posᴼ(numberX),
-            (p `===` (digitZero + z).toOlegLogicNumber()) and posᴼ(numberZ),
+            (n `===` (digitZero + x).toOlegLogicNumber()),
+            posᴼ(numberX),
+            (p `===` (digitZero + z).toOlegLogicNumber()),
+            posᴼ(numberZ),
             greaterThan1ᴼ(m),
             mulᴼ(numberX, m, numberZ)
         )
@@ -205,8 +207,10 @@ fun mulᴼ(n: OlegTerm, m: OlegTerm, p: OlegTerm): Goal = conde(
         val numberY = y.toOlegLogicNumber()
 
         and(
-            (n `===` (digitOne + x).toOlegLogicNumber()) and posᴼ(numberX),
-            (m `===` (digitZero + y).toOlegLogicNumber()) and posᴼ(numberY),
+            (n `===` (digitOne + x).toOlegLogicNumber()),
+            posᴼ(numberX),
+            (m `===` (digitZero + y).toOlegLogicNumber()),
+            posᴼ(numberY),
             mulᴼ(m, n, p)
         )
     },
@@ -215,8 +219,10 @@ fun mulᴼ(n: OlegTerm, m: OlegTerm, p: OlegTerm): Goal = conde(
         val numberY = y.toOlegLogicNumber()
 
         and(
-            (n `===` (digitOne + x).toOlegLogicNumber()) and posᴼ(numberX),
-            (m `===` (digitOne + y).toOlegLogicNumber()) and posᴼ(numberY),
+            (n `===` (digitOne + x).toOlegLogicNumber()),
+            posᴼ(numberX),
+            (m `===` (digitOne + y).toOlegLogicNumber()),
+            posᴼ(numberY),
             oddMulᴼ(numberX, n, m, p)
         )
     }
