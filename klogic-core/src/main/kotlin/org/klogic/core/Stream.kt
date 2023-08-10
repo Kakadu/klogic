@@ -43,7 +43,7 @@ sealed class RecursiveStream<out T> {
         return when (this) {
             is NilStream -> {
                 if (System.getenv("SILENT_MPLUS_BIND") == null)
-                    println("mplus 1: ys = ${HC(other)}")
+                    println("  mplus 1: ys = ${HC(other)}")
                 other.force()
             }
             is ThunkStream -> {
