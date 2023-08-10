@@ -62,7 +62,7 @@ sealed class RecursiveStream<out T> {
                     }
                     else -> {
                         if (System.getenv("SILENT_MPLUS_BIND") == null)
-                            println("mplus 4")
+                            println("  mplus 4")
                         ConsStream(this.head, ThunkStream { other() mplus this.tail })
                     }
                 }
