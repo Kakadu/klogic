@@ -28,7 +28,7 @@ sealed class RecursiveStream<out T> {
             }
         }
     }
-
+    val HC = { it: Any -> System.identityHashCode(it) }
     /**
      * Concatenates two streams, the resulting stream contains elements of both input streams in an interleaved order.
      */
@@ -39,10 +39,11 @@ sealed class RecursiveStream<out T> {
         mplusListeners.forEach { it.onMplus(this, other) }
 
 //        return this mplusImpl other
+
         return when (this) {
             is NilStream -> {
                 if (System.getenv("SILENT_MPLUS_BIND") == null)
-                    println("mplus 1")
+                    println("mplus 1: ys = ${HC(other)}")
                 other.force()
             }
             is ThunkStream -> {
@@ -53,9 +54,10 @@ sealed class RecursiveStream<out T> {
             is ConsStream -> {
                 when (this.tail) {
                     is NilStream -> {
+                        val rez = ConsStream(this.head, other)
                         if (System.getenv("SILENT_MPLUS_BIND") == null)
-                            println("mplus 3")
-                        ConsStream(this.head, other)
+                            println("mplus 3: xs = ${HC(this)} ys = ${HC(other)} ~~> ${HC(rez)}")
+                        rez
                     }
                     else -> {
                         if (System.getenv("SILENT_MPLUS_BIND") == null)
@@ -85,24 +87,24 @@ sealed class RecursiveStream<out T> {
         return when (this) {
             is NilStream -> {
                 if (System.getenv("SILENT_MPLUS_BIND") == null)
-                    println("bind 1")
+                    println("  bind  1")
                 this
             }
             is ThunkStream -> {
                 if (System.getenv("SILENT_MPLUS_BIND") == null)
-                    println("bind 2")
+                    println("  bind  2: xs = ${HC(this)}")
                 ThunkStream { elements() bind f }
             }
             is ConsStream -> {
                 when (this.tail) {
                     is NilStream -> {
                         if (System.getenv("SILENT_MPLUS_BIND") == null)
-                            println("bind 3")
+                            println("  bind  3: xs = ${HC(this)}")
                         f(head)
                     }
                     else -> {
                         if (System.getenv("SILENT_MPLUS_BIND") == null)
-                            println("bind 4")
+                            println("  bind  4: xs = ${HC(this)}")
                         val mappedHead = f(head)
                         mappedHead mplus ThunkStream { tail() bind f }
                     }
