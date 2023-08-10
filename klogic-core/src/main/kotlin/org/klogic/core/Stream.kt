@@ -47,16 +47,17 @@ sealed class RecursiveStream<out T> {
                 other.force()
             }
             is ThunkStream -> {
+                val rez = ThunkStream { other() mplus this }
                 if (System.getenv("SILENT_MPLUS_BIND") == null)
-                    println("mplus 2")
-                return ThunkStream { other() mplus this }
+                    println("  mplus 2: xs = ${HC(this)} ys = ${HC(other)} ~~> Thunk _ = ${HC(rez)}")
+                return rez
             }
             is ConsStream -> {
                 when (this.tail) {
                     is NilStream -> {
                         val rez = ConsStream(this.head, other)
                         if (System.getenv("SILENT_MPLUS_BIND") == null)
-                            println("mplus 3: xs = ${HC(this)} ys = ${HC(other)} ~~> ${HC(rez)}")
+                            println("  mplus 3: xs = ${HC(this)} ys = ${HC(other)} ~~> ${HC(rez)}")
                         rez
                     }
                     else -> {
