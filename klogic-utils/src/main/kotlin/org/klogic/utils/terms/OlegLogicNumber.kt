@@ -92,25 +92,28 @@ fun fullAdderᴼ(b: DigitTerm, x: DigitTerm, y: DigitTerm, r: DigitTerm, c: Digi
  * Adds a carry-in bit [d] to arbitrarily large numbers [n] and [m] to produce a number [r].
  */
 context(RelationalContext)
-fun adderᴼ(d: DigitTerm, n: OlegTerm, m: OlegTerm, r: OlegTerm): Goal = conde(
-    (digitZero `===` d) and (m `===` numberZero) and (n `===` r),
-    (digitZero `===` d) and (n `===` numberZero) and (m `===` r) and posᴼ(m),
-    (digitOne `===` d) and (m `===` numberZero) and delay { adderᴼ(digitZero, n, numberOne, r) },
-    (digitOne `===` d) and (n `===` numberZero) and posᴼ(m) and adderᴼ(digitZero, numberOne, m, r),
-    and(
-        (n `===` numberOne),
-        (m `===` numberOne),
-        freshTypedVars<Digit, Digit> { a, c ->
+fun adderᴼ(d: DigitTerm, n: OlegTerm, m: OlegTerm, r: OlegTerm): Goal =
+    { st ->
+        conde(
+            (digitZero `===` d) and (m `===` numberZero) and (n `===` r),
+            (digitZero `===` d) and (n `===` numberZero) and (m `===` r) and posᴼ(m),
+            (digitOne `===` d) and (m `===` numberZero) and adderᴼ(digitZero, n, numberOne, r),
+            (digitOne `===` d) and (n `===` numberZero) and posᴼ(m) and adderᴼ(digitZero, numberOne, m, r),
             and(
-                logicListOf(a, c).toOlegLogicNumber() `===` r,
-                fullAdderᴼ(d, digitOne, digitOne, a, c)
-            )
-        }
-    ),
-    (n `===` numberOne) and genAdderᴼ(d, n, m, r),
-    (m `===` numberOne) and greaterThan1ᴼ(n) and greaterThan1ᴼ(r) and adderᴼ(d, numberOne, n, r),
-    greaterThan1ᴼ(n) and genAdderᴼ(d, n, m, r)
-)
+                (n `===` numberOne),
+                (m `===` numberOne),
+                freshTypedVars<Digit, Digit> { a, c ->
+                    and(
+                        logicListOf(a, c).toOlegLogicNumber() `===` r,
+                        fullAdderᴼ(d, digitOne, digitOne, a, c)
+                    )
+                }
+            ),
+            (n `===` numberOne) and genAdderᴼ(d, n, m, r),
+            (m `===` numberOne) and greaterThan1ᴼ(n) and greaterThan1ᴼ(r) and adderᴼ(d, numberOne, n, r),
+            greaterThan1ᴼ(n) and genAdderᴼ(d, n, m, r)
+        )(st)
+    }
 
 /**
  * Satisfies [d] + [n] + [m] = [r], provided that [m] and [r] are greater than 1 and [n] is positive.
@@ -129,7 +132,8 @@ fun genAdderᴼ(d: DigitTerm, n: OlegTerm, m: OlegTerm, r: OlegTerm): Goal =
             ((c + z).toOlegLogicNumber() `===` r),
             posᴼ(numberZ),
             (fullAdderᴼ(d, a, b, c, e)),
-            adderᴼ(e, numberX, numberY, numberZ))
+            adderᴼ(e, numberX, numberY, numberZ)
+        )
     }
 
 context(RelationalContext)
@@ -222,6 +226,7 @@ fun boundMulᴼ(q: OlegTerm, p: OlegTerm, n: OlegTerm, m: OlegTerm): Goal = cond
         )
     }
 )
+
 context(RelationalContext)
 fun mulᴼ(n: OlegTerm, m: OlegTerm, p: OlegTerm): Goal = conde(
     (n `===` numberZero) and (p `===` numberZero),
